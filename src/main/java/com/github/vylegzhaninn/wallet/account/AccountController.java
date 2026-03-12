@@ -11,6 +11,11 @@ public class AccountController {
 
     @PostMapping("/create")
     public Account createAccount(@RequestBody AccountDto request){
-        return accountService.createAccount(request);
+        return accountService.create(request);
+    }
+
+    @PatchMapping("/deposit")
+    public Account depositAccount(@RequestBody AccountDto request){
+        return accountService.deposit(request);
     }
 }

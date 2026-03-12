@@ -1,4 +1,6 @@
 package com.github.vylegzhaninn.wallet.account;
 
-public record AccountDto(Long userId) {
+import java.math.BigDecimal;
+
+public record AccountDto(Long userId,Long id, BigDecimal amount) {
 }
