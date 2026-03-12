@@ -10,8 +10,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop   # автоматически создаст таблицы
+      ddl-auto: none
     show-sql: true
 
   Liquibase:
-    enabled: false
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true

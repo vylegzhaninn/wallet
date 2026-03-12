@@ -1,0 +1,6 @@
+CREATE TABLE accounts (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    balance DECIMAL(19, 2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT NOW()
+);
