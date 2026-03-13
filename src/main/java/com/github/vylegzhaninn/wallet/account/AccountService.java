@@ -37,6 +37,10 @@ public class AccountService {
 
     @Transactional
     public Account deposit(AccountDto request) {
+        if (!userRepository.existsById(request.userId())) {
+            throw new RuntimeException("User not found with id: " + request.userId());
+        }
+
         Account account = accountRepository.findByIdForUpdate(request.id())
                 .orElseThrow(() -> new RuntimeException("Account not found with id: " + request.id()));
 
@@ -50,6 +54,10 @@ public class AccountService {
 
     @Transactional
     public Account withdraw(AccountDto request) {
+        if (!userRepository.existsById(request.userId())) {
+            throw new RuntimeException("User not found with id: " + request.userId());
+        }
+
         Account account = accountRepository.findByIdForUpdate(request.id())
                 .orElseThrow(() -> new RuntimeException("Account not found with id: " + request.id()));
 
