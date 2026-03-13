@@ -1,5 +1,7 @@
 package com.github.vylegzhaninn.wallet.user;
 
+import com.github.vylegzhaninn.wallet.exception.AlreadyExistsException;
+import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +14,10 @@ public class UserService {
 
     public User create(UserDto request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new RuntimeException("User with email " + request.email() + " already exists");
+            throw new AlreadyExistsException("User with email " + request.email() + " already exists");
         }
         if (userRepository.existsByName(request.name())) {
-            throw new RuntimeException("User with name " + request.name() + " already exists");
+            throw new AlreadyExistsException("User with name " + request.name() + " already exists");
         }
 
         User user = User.builder()
@@ -27,7 +29,7 @@ public class UserService {
 
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 
     public List<User> getAll() {
@@ -49,7 +51,7 @@ public class UserService {
 
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id: " + id);
+            throw new NotFoundException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
     }

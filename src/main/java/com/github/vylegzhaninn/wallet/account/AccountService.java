@@ -1,5 +1,8 @@
 package com.github.vylegzhaninn.wallet.account;
 
+import com.github.vylegzhaninn.wallet.exception.InsufficientFundsException;
+import com.github.vylegzhaninn.wallet.exception.InvalidAmountException;
+import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import com.github.vylegzhaninn.wallet.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,7 @@ public class AccountService {
 
     public Account create(AccountDto request) {
         if (!userRepository.existsById(request.userId())) {
-            throw new RuntimeException("User not found with id: " + request.userId());
+            throw new NotFoundException("User not found with id: " + request.userId());
         }
 
         Account account = Account.builder()
@@ -28,7 +31,7 @@ public class AccountService {
 
     public Account getById(Long id) {
         return accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + id));
     }
 
     public List<Account> getAll() {
@@ -38,14 +41,14 @@ public class AccountService {
     @Transactional
     public Account deposit(AccountDto request) {
         if (!userRepository.existsById(request.userId())) {
-            throw new RuntimeException("User not found with id: " + request.userId());
+            throw new NotFoundException("User not found with id: " + request.userId());
         }
 
         Account account = accountRepository.findByIdForUpdate(request.id())
-                .orElseThrow(() -> new RuntimeException("Account not found with id: " + request.id()));
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + request.id()));
 
         if (request.amount() == null || request.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Deposit amount must be positive");
+            throw new InvalidAmountException("Deposit amount must be positive");
         }
 
         account.deposit(request.amount());
@@ -55,14 +58,18 @@ public class AccountService {
     @Transactional
     public Account withdraw(AccountDto request) {
         if (!userRepository.existsById(request.userId())) {
-            throw new RuntimeException("User not found with id: " + request.userId());
+            throw new NotFoundException("User not found with id: " + request.userId());
         }
 
         Account account = accountRepository.findByIdForUpdate(request.id())
-                .orElseThrow(() -> new RuntimeException("Account not found with id: " + request.id()));
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + request.id()));
 
         if (request.amount() == null || request.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Withdraw amount must be positive");
+            throw new InvalidAmountException("Withdraw amount must be positive");
+        }
+
+        if (account.getBalance().compareTo(request.amount()) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
         }
 
         account.withdraw(request.amount());
@@ -71,7 +78,7 @@ public class AccountService {
 
     public void delete(Long id) {
         if (!accountRepository.existsById(id)) {
-            throw new RuntimeException("Account not found with id: " + id);
+            throw new NotFoundException("Account not found with id: " + id);
         }
         accountRepository.deleteById(id);
     }
