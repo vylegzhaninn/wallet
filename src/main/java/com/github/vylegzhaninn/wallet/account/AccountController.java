@@ -34,11 +34,6 @@ public class AccountController {
         return ResponseEntity.ok(accountService.deposit(request));
     }
 
-    @PatchMapping("/withdraw")
-    public ResponseEntity<Account> withdraw(@RequestBody AccountDto request) {
-        return ResponseEntity.ok(accountService.withdraw(request));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
         accountService.delete(id);
