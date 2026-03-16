@@ -1,7 +1,6 @@
 package com.github.vylegzhaninn.wallet.account;
 
 import com.github.vylegzhaninn.wallet.exception.InsufficientFundsException;
-import com.github.vylegzhaninn.wallet.exception.InvalidAmountException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import com.github.vylegzhaninn.wallet.user.UserRepository;
 import lombok.RequiredArgsConstructor;

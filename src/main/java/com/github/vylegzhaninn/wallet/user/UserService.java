@@ -2,6 +2,7 @@ package com.github.vylegzhaninn.wallet.user;
 
 import com.github.vylegzhaninn.wallet.exception.AlreadyExistsException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
 
     public User create(UserDto request) {
         if (userRepository.existsByEmail(request.email())) {
@@ -36,6 +38,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     public User update(Long id, UserDto request) {
         User user = getById(id);
 

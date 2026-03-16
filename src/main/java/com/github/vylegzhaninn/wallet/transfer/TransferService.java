@@ -1,54 +1,58 @@
 package com.github.vylegzhaninn.wallet.transfer;
 
-import com.github.vylegzhaninn.wallet.account.AccountDto;
+import com.github.vylegzhaninn.wallet.account.Account;
 import com.github.vylegzhaninn.wallet.account.AccountRepository;
-import com.github.vylegzhaninn.wallet.account.AccountService;
+import com.github.vylegzhaninn.wallet.exception.InsufficientFundsException;
 import com.github.vylegzhaninn.wallet.exception.InvalidAmountException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
-import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
-    private final AccountService accountService;
 
     public List<TransferDto> getHistory(Long accountId) {
-        if (!accountRepository.existsById(accountId))
+        if (!accountRepository.existsById(accountId)) {
             throw new NotFoundException("Account not found");
+        }
 
         return transferRepository.findByFromOrTo(accountId, accountId);
     }
 
     @Transactional
     public void transfer(TransferDto request) {
-        if (!accountRepository.existsById(request.from()) || !accountRepository.existsById(request.to()))
-            throw new NotFoundException("Account not found");
+        Long firstId = Math.min(request.from(), request.to());
+        Long secondId = Math.max(request.from(), request.to());
 
-        Transfer transfer = Transfer
-            .builder()
-            .from(request.from())
-            .to(request.to())
-            .amount(request.amount())
-            .build();
+        Account first = accountRepository.findByIdForUpdate(firstId)
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + firstId));
+        Account second = accountRepository.findByIdForUpdate(secondId)
+                .orElseThrow(() -> new NotFoundException("Account not found with id: " + secondId));
 
+        Account from = first.getId().equals(request.from()) ? first : second;
+        Account to = first.getId().equals(request.to()) ? first : second;
+
+        if (from.getBalance().compareTo(request.amount()) < 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+
+        from.withdraw(request.amount());
+        to.deposit(request.amount());
+
+        accountRepository.save(from);
+        accountRepository.save(to);
+
+        Transfer transfer = Transfer.builder()
+                .from(request.from())
+                .to(request.to())
+                .amount(request.amount())
+                .build();
         transferRepository.save(transfer);
-
-        AccountDto accountFrom = new AccountDto(
-            request.userIdFrom(), request.from(), request.amount()
-        );
-
-        AccountDto accountTo = new AccountDto(
-            request.userIdTo(), request.to(), request.amount()
-        );
-
-        accountService.withdraw(accountFrom);
-        accountService.deposit(accountTo);
     }
 }
