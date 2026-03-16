@@ -14,9 +14,9 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    @PostMapping
-    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountDto request) {
-        Account account = accountService.create(request);
+    @PostMapping("/{userId}")
+    public ResponseEntity<Account> createAccount(@PathVariable Long userId) {
+        Account account = accountService.create(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 

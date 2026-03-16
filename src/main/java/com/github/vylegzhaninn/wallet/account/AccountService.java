@@ -16,13 +16,13 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
-    public Account create(AccountDto request) {
-        if (!userRepository.existsById(request.userId())) {
-            throw new NotFoundException("User not found with id: " + request.userId());
+    public Account create(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User not found with id: " + userId);
         }
 
         Account account = Account.builder()
-                .userId(request.userId())
+                .userId(userId)
                 .balance(BigDecimal.ZERO)
                 .build();
         return accountRepository.save(account);

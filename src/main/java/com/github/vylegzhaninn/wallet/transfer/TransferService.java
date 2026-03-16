@@ -51,6 +51,8 @@ public class TransferService {
         Transfer transfer = Transfer.builder()
                 .from(request.from())
                 .to(request.to())
+                .userIdFrom(request.userIdFrom())
+                .userIdTo(request.userIdTo())
                 .amount(request.amount())
                 .build();
         transferRepository.save(transfer);
