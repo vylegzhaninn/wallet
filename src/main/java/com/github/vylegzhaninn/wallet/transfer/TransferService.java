@@ -6,6 +6,7 @@ import com.github.vylegzhaninn.wallet.account.AccountService;
 import com.github.vylegzhaninn.wallet.exception.InvalidAmountException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,13 @@ public class TransferService {
     private final TransferRepository transferRepository;
     private final AccountRepository accountRepository;
     private final AccountService accountService;
+
+    public List<TransferDto> getHistory(Long accountId) {
+        if (!accountRepository.existsById(accountId))
+            throw new NotFoundException("Account not found");
+
+        return transferRepository.findByFromOrTo(accountId, accountId);
+    }
 
     @Transactional
     public void transfer(TransferDto request) {
