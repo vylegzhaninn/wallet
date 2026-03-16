@@ -31,10 +31,6 @@ public class TransferService {
         if (!accountRepository.existsById(request.from()) || !accountRepository.existsById(request.to()))
             throw new NotFoundException("Account not found");
 
-        if (request.amount().compareTo(BigDecimal.ZERO) <= 0){
-            throw new InvalidAmountException("Amount should be bigger then zero");
-        }
-
         Transfer transfer = Transfer
             .builder()
             .from(request.from())

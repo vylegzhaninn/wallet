@@ -1,4 +1,11 @@
 package com.github.vylegzhaninn.wallet.user;
 
-public record UserDto(String name, String email) {
+import jakarta.validation.constraints.NotNull;
+
+public record UserDto(
+    @NotNull(message = "Name shouldn't be null")
+    String name,
+    @NotNull(message = "Email shouldn't be null")
+    String email
+) {
 }

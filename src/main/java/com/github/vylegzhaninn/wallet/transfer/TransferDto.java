@@ -1,6 +1,19 @@
 package com.github.vylegzhaninn.wallet.transfer;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-public record TransferDto(Long from, Long to,Long userIdFrom, Long userIdTo, BigDecimal amount) {
+public record TransferDto(
+    @NotNull(message = "From Id shouldn't be null")
+    Long from,
+    @NotNull(message = "To Id shouldn't be null")
+    Long to,
+    @NotNull(message = "User Id From shouldn't be null")
+    Long userIdFrom,
+    @NotNull(message = "User Id To shouldn't be null")
+    Long userIdTo,
+    @DecimalMin(value = "0.0", inclusive = true, message = "Amount should be more than zero")
+    BigDecimal amount
+) {
 }

@@ -1,5 +1,6 @@
 package com.github.vylegzhaninn.wallet.account;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody AccountDto request) {
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountDto request) {
         Account account = accountService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
@@ -30,7 +31,7 @@ public class AccountController {
     }
 
     @PatchMapping("/deposit")
-    public ResponseEntity<Account> deposit(@RequestBody AccountDto request) {
+    public ResponseEntity<Account> deposit(@Valid @RequestBody AccountDto request) {
         return ResponseEntity.ok(accountService.deposit(request));
     }
 

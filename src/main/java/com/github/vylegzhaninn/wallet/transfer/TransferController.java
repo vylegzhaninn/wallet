@@ -1,5 +1,6 @@
 package com.github.vylegzhaninn.wallet.transfer;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class TransferController {
     private final TransferService transferService;
 
     @PostMapping
-    public ResponseEntity<Void> executeTransfer(@RequestBody TransferDto request){
+    public ResponseEntity<Void> executeTransfer(@Valid @RequestBody TransferDto request){
         transferService.transfer(request);
         return ResponseEntity.ok().build();
     }

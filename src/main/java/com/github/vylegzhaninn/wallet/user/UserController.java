@@ -1,5 +1,6 @@
 package com.github.vylegzhaninn.wallet.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserDto request) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDto request) {
         User user = userService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -30,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDto request) {
+    public ResponseEntity<User> updateUser(@PathVariable Long id,@Valid @RequestBody UserDto request) {
         return ResponseEntity.ok(userService.update(id, request));
     }
 

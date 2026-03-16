@@ -46,11 +46,6 @@ public class AccountService {
 
         Account account = accountRepository.findByIdForUpdate(request.id())
                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + request.id()));
-
-        if (request.amount() == null || request.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidAmountException("Deposit amount must be positive");
-        }
-
         account.deposit(request.amount());
         return accountRepository.save(account);
     }
@@ -64,9 +59,6 @@ public class AccountService {
         Account account = accountRepository.findByIdForUpdate(request.id())
                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + request.id()));
 
-        if (request.amount() == null || request.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidAmountException("Withdraw amount must be positive");
-        }
 
         if (account.getBalance().compareTo(request.amount()) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
