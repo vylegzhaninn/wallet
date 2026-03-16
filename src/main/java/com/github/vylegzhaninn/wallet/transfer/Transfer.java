@@ -24,6 +24,12 @@ public class Transfer {
     @Column(name = "to_account_id", nullable = false)
     private Long to;
 
+    @Column(name = "user_id_from", nullable = false)
+    private Long userIdFrom;
+
+    @Column(name = "user_id_to", nullable = false)
+    private Long userIdTo;
+
     @Column(nullable = false)
     private BigDecimal amount;
 
