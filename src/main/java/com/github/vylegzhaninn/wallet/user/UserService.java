@@ -4,6 +4,8 @@ import com.github.vylegzhaninn.wallet.exception.AlreadyExistsException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
-
+    @Transactional
     public User create(UserDto request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new AlreadyExistsException("User with email " + request.email() + " already exists");
@@ -34,8 +36,8 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public Page<User> getAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Transactional
@@ -48,6 +50,9 @@ public class UserService {
         if (request.email() != null) {
             user.setEmail(request.email());
         }
+
+        if (userRepository.existsByEmail(request.email()))
+            throw new IllegalArgumentException("The email is already in use");
 
         return userRepository.save(user);
     }

@@ -4,6 +4,8 @@ import com.github.vylegzhaninn.wallet.exception.InsufficientFundsException;
 import com.github.vylegzhaninn.wallet.exception.NotFoundException;
 import com.github.vylegzhaninn.wallet.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public Account create(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User not found with id: " + userId);
@@ -33,8 +36,8 @@ public class AccountService {
                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + id));
     }
 
-    public List<Account> getAll() {
-        return accountRepository.findAll();
+    public Page<Account> getAll(Pageable pageable) {
+        return accountRepository.findAll(pageable);
     }
 
     @Transactional
