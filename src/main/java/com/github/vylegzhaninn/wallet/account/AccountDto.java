@@ -10,7 +10,7 @@ public record AccountDto(
     @NotNull(message = "Account Id shouldn't be null")
     Long id,
     @NotNull(message = "Amount shouldn't be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Amount should be more than zero")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Amount should be more than zero")
     BigDecimal amount
 ) {
 }

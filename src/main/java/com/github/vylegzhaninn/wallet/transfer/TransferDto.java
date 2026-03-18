@@ -13,7 +13,7 @@ public record TransferDto(
     Long userIdFrom,
     @NotNull(message = "User Id To shouldn't be null")
     Long userIdTo,
-    @DecimalMin(value = "0.0", inclusive = true, message = "Amount should be more than zero")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Amount should be more than zero")
     BigDecimal amount
 ) {
 }

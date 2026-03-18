@@ -30,6 +30,9 @@ public class TransferService {
         Long firstId = Math.min(request.from(), request.to());
         Long secondId = Math.max(request.from(), request.to());
 
+        if (firstId.equals(secondId))
+            throw new IllegalArgumentException("From and To id must be different");
+
         Account first = accountRepository.findByIdForUpdate(firstId)
                 .orElseThrow(() -> new NotFoundException("Account not found with id: " + firstId));
         Account second = accountRepository.findByIdForUpdate(secondId)
