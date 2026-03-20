@@ -62,6 +62,7 @@ public class TransferRepositoryTest {
         // Then
         assertThat(result).hasSize(2);
         assertThat(result).extracting(TransferDto::amount)
+                .usingElementComparator(BigDecimal::compareTo)
                 .containsExactlyInAnyOrder(BigDecimal.TEN, BigDecimal.valueOf(20));
 
         // Check mapping

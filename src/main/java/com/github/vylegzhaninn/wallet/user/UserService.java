@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User create(UserDto request) {
@@ -27,6 +29,7 @@ public class UserService {
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         return userRepository.save(user);
     }
@@ -47,12 +50,15 @@ public class UserService {
         if (request.name() != null) {
             user.setName(request.name());
         }
-        if (request.email() != null) {
+
+        if (request.email() != null && !request.email().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.email())) {
+                throw new IllegalArgumentException("The email is already in use");
+            }
             user.setEmail(request.email());
         }
 
-        if (userRepository.existsByEmail(request.email()))
-            throw new IllegalArgumentException("The email is already in use");
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         return userRepository.save(user);
     }
